@@ -1,20 +1,18 @@
 "use client";
 
-import { Line, Sparkles } from "@react-three/drei";
+import { Line, Sparkles, Stars } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { Component, type ReactNode, useMemo, useRef, useState } from "react";
 import type { Group, Mesh } from "three";
 import { Vector3 } from "three";
 
-const GOLD = "#a67c00";
-const GOLD_GLOW = "#c9a227";
-const CYAN = "#0e7c8b";
-const CYAN_GLOW = "#2bb8c9";
+const GOLD = "#e8c547";
+const CYAN = "#5eead4";
 
 function useNeuralGraph() {
   return useMemo(() => {
-    const nodeCount = 42;
-    const radius = 1.35;
+    const nodeCount = 36;
+    const radius = 1.25;
     const nodes: Vector3[] = [];
 
     for (let i = 0; i < nodeCount; i++) {
@@ -32,7 +30,7 @@ function useNeuralGraph() {
     const edges: [Vector3, Vector3][] = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
-        if (nodes[i].distanceTo(nodes[j]) < 0.95) {
+        if (nodes[i].distanceTo(nodes[j]) < 1.0) {
           edges.push([nodes[i], nodes[j]]);
         }
       }
@@ -42,28 +40,27 @@ function useNeuralGraph() {
   }, []);
 }
 
-/** Rotating neural mesh — intelligent automation & clinical decision support */
 function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
   const groupRef = useRef<Group>(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.elapsedTime;
-    groupRef.current.rotation.y = t * 0.18;
-    groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.08;
+    groupRef.current.rotation.y = t * 0.35;
+    groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.12;
   });
 
   return (
     <group ref={groupRef}>
       {nodes.map((pos, i) => (
         <mesh key={`node-${i}`} position={pos}>
-          <sphereGeometry args={[0.045, 12, 12]} />
+          <sphereGeometry args={[0.065, 16, 16]} />
           <meshStandardMaterial
             color={i % 3 === 0 ? GOLD : CYAN}
-            emissive={i % 3 === 0 ? GOLD_GLOW : CYAN_GLOW}
-            emissiveIntensity={0.85}
-            metalness={0.4}
-            roughness={0.25}
+            emissive={i % 3 === 0 ? GOLD : CYAN}
+            emissiveIntensity={1.2}
+            metalness={0.5}
+            roughness={0.2}
           />
         </mesh>
       ))}
@@ -71,95 +68,77 @@ function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
         <Line
           key={`edge-${i}`}
           points={pair}
-          color={i % 2 === 0 ? CYAN_GLOW : GOLD_GLOW}
+          color={i % 2 === 0 ? CYAN : GOLD}
           transparent
-          opacity={0.35}
-          lineWidth={1}
+          opacity={0.65}
+          lineWidth={1.5}
         />
       ))}
     </group>
   );
 }
 
-/** Gold shield ring — protection, trust, enterprise healthcare */
 function ShieldRing() {
   const ref = useRef<Mesh>(null);
 
   useFrame((state) => {
     if (!ref.current) return;
-    ref.current.rotation.z = state.clock.elapsedTime * 0.08;
+    ref.current.rotation.z = state.clock.elapsedTime * 0.15;
   });
 
   return (
-    <mesh ref={ref} rotation={[Math.PI / 2.2, 0, 0]}>
-      <torusGeometry args={[1.85, 0.018, 16, 120]} />
+    <mesh ref={ref} rotation={[Math.PI / 2.15, 0, 0]}>
+      <torusGeometry args={[1.75, 0.035, 24, 128]} />
       <meshStandardMaterial
         color={GOLD}
-        emissive={GOLD_GLOW}
-        emissiveIntensity={0.6}
-        metalness={0.85}
-        roughness={0.15}
-        transparent
-        opacity={0.9}
+        emissive={GOLD}
+        emissiveIntensity={1}
+        metalness={0.9}
+        roughness={0.1}
       />
     </mesh>
   );
 }
 
-/** Orbiting care-pathway rings — coordination, access, workflows */
 function CarePathwayRings() {
   const ringA = useRef<Group>(null);
   const ringB = useRef<Group>(null);
-  const ringC = useRef<Group>(null);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    if (ringA.current) ringA.current.rotation.x = t * 0.35;
-    if (ringB.current) ringB.current.rotation.y = t * -0.28;
-    if (ringC.current) ringC.current.rotation.z = t * 0.22;
+    if (ringA.current) {
+      ringA.current.rotation.x = t * 0.5;
+      ringA.current.rotation.y = t * 0.25;
+    }
+    if (ringB.current) {
+      ringB.current.rotation.y = t * -0.4;
+      ringB.current.rotation.z = t * 0.3;
+    }
   });
 
   return (
     <>
-      <group ref={ringA} rotation={[0.6, 0.2, 0]}>
+      <group ref={ringA} rotation={[0.5, 0.3, 0]}>
         <mesh>
-          <torusGeometry args={[2.15, 0.012, 8, 100]} />
+          <torusGeometry args={[2.05, 0.02, 12, 120]} />
           <meshStandardMaterial
             color={CYAN}
-            emissive={CYAN_GLOW}
-            emissiveIntensity={0.45}
-            metalness={0.6}
-            roughness={0.3}
+            emissive={CYAN}
+            emissiveIntensity={0.8}
             transparent
-            opacity={0.55}
+            opacity={0.7}
           />
         </mesh>
       </group>
-      <group ref={ringB} rotation={[1.1, -0.4, 0.3]}>
+      <group ref={ringB} rotation={[1.2, -0.5, 0.2]}>
         <mesh>
-          <torusGeometry args={[2.35, 0.01, 8, 100]} />
-          <meshStandardMaterial
-            color={CYAN}
-            emissive={CYAN_GLOW}
-            emissiveIntensity={0.45}
-            metalness={0.6}
-            roughness={0.3}
-            transparent
-            opacity={0.55}
-          />
-        </mesh>
-      </group>
-      <group ref={ringC} rotation={[-0.3, 0.8, -0.2]}>
-        <mesh>
-          <torusGeometry args={[2.05, 0.014, 8, 100]} />
+          <torusGeometry args={[2.25, 0.018, 12, 120]} />
           <meshStandardMaterial
             color={GOLD}
-            emissive={GOLD_GLOW}
-            emissiveIntensity={0.4}
-            metalness={0.6}
-            roughness={0.3}
+            emissive={GOLD}
+            emissiveIntensity={0.7}
             transparent
-            opacity={0.5}
+            opacity={0.55}
           />
         </mesh>
       </group>
@@ -167,26 +146,25 @@ function CarePathwayRings() {
   );
 }
 
-/** Pulsing core — patient-centered care at the center of automation */
 function CareCore() {
   const ref = useRef<Mesh>(null);
 
   useFrame((state) => {
     if (!ref.current) return;
-    const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.8) * 0.06;
+    const pulse = 1 + Math.sin(state.clock.elapsedTime * 2.2) * 0.1;
     ref.current.scale.setScalar(pulse);
+    ref.current.rotation.y = state.clock.elapsedTime * 0.5;
+    ref.current.rotation.x = state.clock.elapsedTime * 0.3;
   });
 
   return (
     <mesh ref={ref}>
-      <icosahedronGeometry args={[0.42, 1]} />
+      <icosahedronGeometry args={[0.5, 1]} />
       <meshStandardMaterial
         color={CYAN}
-        emissive={CYAN_GLOW}
-        emissiveIntensity={0.9}
+        emissive={CYAN}
+        emissiveIntensity={1.5}
         wireframe
-        transparent
-        opacity={0.85}
       />
     </mesh>
   );
@@ -197,51 +175,84 @@ function SceneContent() {
 
   return (
     <>
-      <ambientLight intensity={0.55} />
-      <pointLight position={[4, 4, 4]} intensity={1.2} color="#ffffff" />
-      <pointLight position={[-3, -2, 2]} intensity={0.9} color={CYAN_GLOW} />
-      <pointLight position={[3, -3, -2]} intensity={0.7} color={GOLD_GLOW} />
+      <color attach="background" args={["#050a14"]} />
+      <fog attach="fog" args={["#050a14", 4, 14]} />
+      <ambientLight intensity={0.35} />
+      <pointLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
+      <pointLight position={[-4, -2, 3]} intensity={1.2} color={CYAN} />
+      <pointLight position={[4, -4, 2]} intensity={1} color={GOLD} />
 
       <NeuralNetwork {...graph} />
       <ShieldRing />
       <CarePathwayRings />
       <CareCore />
 
-      <Sparkles
-        count={60}
-        scale={[5, 5, 5]}
-        size={2.2}
-        speed={0.35}
-        color={GOLD_GLOW}
-        opacity={0.55}
-      />
-      <Sparkles
-        count={60}
-        scale={[5, 5, 5]}
-        size={2}
-        speed={0.45}
-        color={CYAN_GLOW}
-        opacity={0.5}
-      />
+      <Stars radius={80} depth={40} count={1200} factor={3} saturation={0} fade speed={0.8} />
+      <Sparkles count={100} scale={6} size={3} speed={0.6} color={GOLD} />
+      <Sparkles count={100} scale={6} size={2.5} speed={0.8} color={CYAN} />
     </>
   );
 }
 
-type HealthcareSceneProps = {
-  className?: string;
+type WebGLErrorBoundaryProps = {
+  children: ReactNode;
+  onError: () => void;
 };
 
-export function HealthcareScene({ className = "" }: HealthcareSceneProps) {
+class WebGLErrorBoundary extends Component<
+  WebGLErrorBoundaryProps,
+  { hasError: boolean }
+> {
+  constructor(props: WebGLErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    this.props.onError();
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
+function CssFallback() {
   return (
-    <div className={`relative h-full w-full ${className}`} aria-hidden>
+    <div className="absolute inset-0 overflow-hidden bg-[#050a14]">
+      <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-cyan-accent/30 blur-3xl" />
+      <div className="absolute left-1/3 top-1/3 h-32 w-32 animate-spin rounded-full border-2 border-dashed border-gold-primary/50 [animation-duration:12s]" />
+      <div className="absolute right-1/4 bottom-1/4 h-40 w-40 animate-spin rounded-full border border-cyan-accent/40 [animation-duration:8s] [animation-direction:reverse]" />
+    </div>
+  );
+}
+
+export function HealthcareScene() {
+  const [webglFailed, setWebglFailed] = useState(false);
+
+  if (webglFailed) {
+    return <CssFallback />;
+  }
+
+  return (
+    <WebGLErrorBoundary onError={() => setWebglFailed(true)}>
       <Canvas
-        camera={{ position: [0, 0, 5.2], fov: 42 }}
-        dpr={[1, 1.75]}
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-        style={{ background: "transparent" }}
+        className="!h-full !w-full"
+        camera={{ position: [0, 0, 4.8], fov: 45 }}
+        dpr={[1, 2]}
+        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+        onCreated={({ gl }) => {
+          gl.setClearColor("#050a14");
+        }}
+        style={{ width: "100%", height: "100%", display: "block" }}
       >
         <SceneContent />
       </Canvas>
-    </div>
+    </WebGLErrorBoundary>
   );
 }
