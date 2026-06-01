@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { hero } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
+import { HeroVisualization } from "@/components/three/HeroVisualization";
 
 export function Hero() {
   return (
@@ -26,21 +26,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="reveal flex flex-1 justify-center lg:justify-end">
-          <div className="relative w-full max-w-md">
-            <div
-              className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-gold-tint to-cyan-tint opacity-60 blur-2xl dark:opacity-40"
-              aria-hidden
-            />
-            <Image
-              src="/images/Logo.png"
-              alt="Credentia AI — intelligent healthcare automation"
-              width={520}
-              height={520}
-              className="relative w-full rounded-2xl object-contain"
-              priority
-            />
-          </div>
+        <div className="reveal w-full flex-1 lg:max-w-xl">
+          <HeroVisualization />
         </div>
       </div>
     </section>
