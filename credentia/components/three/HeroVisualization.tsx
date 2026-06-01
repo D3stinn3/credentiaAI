@@ -45,7 +45,6 @@ export function HeroVisualization() {
     getServerReducedMotion,
   );
   const variant = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
-  const isDark = variant === "dark";
 
   return (
     <div className="relative w-full max-w-lg">
@@ -59,28 +58,7 @@ export function HeroVisualization() {
           variant={variant}
           motionScale={prefersReducedMotion ? 0.25 : 1}
         />
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-2 pt-16">
-          <p
-            className={`font-display text-sm font-semibold ${
-              isDark ? "text-white" : "text-text-primary"
-            }`}
-          >
-            Live intelligence mesh
-          </p>
-          <p
-            className={`mt-1 text-xs ${
-              isDark ? "text-white/70" : "text-text-muted"
-            }`}
-          >
-            Neural networks · Protective shield · Care pathways
-          </p>
-        </div>
       </div>
-
-      <p className="mt-3 text-center text-xs text-text-subtle">
-        3D visualization — AI networks powering healthcare automation
-      </p>
     </div>
   );
 }
