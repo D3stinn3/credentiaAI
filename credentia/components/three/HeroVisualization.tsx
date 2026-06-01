@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { HealthcareScene } from "@/components/three/HealthcareScene";
+import { HealthcareScene, type SceneVariant } from "@/components/three/HealthcareScene";
 
 function subscribeReducedMotion(onChange: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -17,28 +17,68 @@ function getServerReducedMotion() {
   return false;
 }
 
+function subscribeTheme(onChange: () => void) {
+  window.addEventListener("credentia-theme-change", onChange);
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => {
+    window.removeEventListener("credentia-theme-change", onChange);
+    observer.disconnect();
+  };
+}
+
+function getTheme(): SceneVariant {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function getServerTheme(): SceneVariant {
+  return "light";
+}
+
 export function HeroVisualization() {
   const prefersReducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotion,
     getServerReducedMotion,
   );
+  const variant = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
+  const isDark = variant === "dark";
 
   return (
     <div className="relative w-full max-w-lg">
       <div
-        className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-gold-primary/25 via-transparent to-cyan-accent/30 blur-2xl"
+        className="absolute -inset-6 rounded-full bg-radial from-gold-primary/15 via-cyan-accent/10 to-transparent blur-3xl"
         aria-hidden
       />
 
-      <div className="relative h-[400px] w-full overflow-hidden rounded-[1.75rem] border border-border shadow-[var(--shadow-elevated)] sm:h-[460px]">
-        <HealthcareScene motionScale={prefersReducedMotion ? 0.25 : 1} />
+      <div className="relative h-[400px] w-full overflow-hidden rounded-4xl sm:h-[460px]">
+        <HealthcareScene
+          variant={variant}
+          motionScale={prefersReducedMotion ? 0.25 : 1}
+        />
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#050a14] via-[#050a14]/70 to-transparent px-5 pb-5 pt-16">
-          <p className="font-display text-sm font-semibold text-white">
+        <div
+          className={`pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-5 pt-16 ${
+            isDark
+              ? "bg-linear-to-t from-[#050a14] via-[#050a14]/60 to-transparent"
+              : "bg-linear-to-t from-[#f8fafc] via-[#f8fafc]/60 to-transparent"
+          }`}
+        >
+          <p
+            className={`font-display text-sm font-semibold ${
+              isDark ? "text-white" : "text-text-primary"
+            }`}
+          >
             Live intelligence mesh
           </p>
-          <p className="mt-1 text-xs text-white/70">
+          <p
+            className={`mt-1 text-xs ${
+              isDark ? "text-white/70" : "text-text-muted"
+            }`}
+          >
             Neural networks · Protective shield · Care pathways
           </p>
         </div>
