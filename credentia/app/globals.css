@@ -1,26 +1,147 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-base: #f8fafc;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+
+  --gold-primary: #a67c00;
+  --gold-hover: #8b6914;
+  --gold-tint: #fbf6e8;
+
+  --cyan-accent: #0e7c8b;
+  --cyan-hover: #0a6571;
+  --cyan-tint: #e6f6f8;
+
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+  --text-subtle: #64748b;
+
+  --border: #e2e8f0;
+  --border-accent: rgba(166, 124, 0, 0.25);
+
+  --success: #0d7a5f;
+
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-elevated: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+.dark {
+  --bg-base: #05080f;
+  --bg-elevated: #0c1220;
+  --bg-subtle: #111827;
+  --bg-glass: rgba(12, 18, 32, 0.72);
+
+  --gold-primary: #c9a227;
+  --gold-hover: #e8c547;
+  --gold-tint: rgba(201, 162, 39, 0.12);
+
+  --cyan-accent: #2bb8c9;
+  --cyan-hover: #5cc9d6;
+  --cyan-tint: rgba(43, 184, 201, 0.12);
+
+  --text-primary: #f4f6fa;
+  --text-muted: #9aa3b5;
+  --text-subtle: #6b7289;
+
+  --border: rgba(148, 163, 184, 0.15);
+  --border-accent: rgba(201, 162, 39, 0.22);
+
+  --success: #3d9b7a;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-base: var(--bg-base);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-bg-glass: var(--bg-glass);
+
+  --color-gold-primary: var(--gold-primary);
+  --color-gold-hover: var(--gold-hover);
+  --color-gold-tint: var(--gold-tint);
+
+  --color-cyan-accent: var(--cyan-accent);
+  --color-cyan-hover: var(--cyan-hover);
+  --color-cyan-tint: var(--cyan-tint);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+
+  --color-border: var(--border);
+  --color-border-accent: var(--border-accent);
+
+  --color-success: var(--success);
+
+  --font-sans: var(--font-source-sans);
+  --font-display: var(--font-plus-jakarta);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-source-sans), system-ui, sans-serif;
+}
+
+.hero-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 20%, rgba(201, 162, 39, 0.08), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 90% 80%, rgba(14, 124, 139, 0.06), transparent 50%),
+    var(--bg-base);
+}
+
+.dark .hero-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 20%, rgba(201, 162, 39, 0.12), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 90% 80%, rgba(43, 184, 201, 0.1), transparent 50%),
+    var(--bg-base);
+}
+
+.gradient-hairline {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold-primary),
+    var(--cyan-accent),
+    transparent
+  );
+  opacity: 0.35;
+}
+
+.reveal {
+  animation: fade-up 0.6s ease-out both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
