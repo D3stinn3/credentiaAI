@@ -1,27 +1,56 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
-import { applyTheme, getPreferredTheme, type Theme } from "@/lib/theme";
+import { useSyncExternalStore } from "react";
+import { applyTheme, type Theme } from "@/lib/theme";
+
+const THEME_CHANGE_EVENT = "credentia-theme-change";
+
+function subscribeToTheme(onStoreChange: () => void) {
+  window.addEventListener(THEME_CHANGE_EVENT, onStoreChange);
+  return () => window.removeEventListener(THEME_CHANGE_EVENT, onStoreChange);
+}
+
+function getThemeSnapshot(): Theme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function getServerThemeSnapshot(): Theme {
+  return "light";
+}
+
+function subscribeToClient(onStoreChange: () => void) {
+  onStoreChange();
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerClientSnapshot() {
+  return false;
+}
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const initial = getPreferredTheme();
-    applyTheme(initial);
-    setTheme(initial);
-    setMounted(true);
-  }, []);
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    getThemeSnapshot,
+    getServerThemeSnapshot,
+  );
+  const isClient = useSyncExternalStore(
+    subscribeToClient,
+    getClientSnapshot,
+    getServerClientSnapshot,
+  );
 
   function toggle() {
     const next: Theme = theme === "light" ? "dark" : "light";
     applyTheme(next);
-    setTheme(next);
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <button
         type="button"
