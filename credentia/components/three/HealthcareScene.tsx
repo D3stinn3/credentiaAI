@@ -11,7 +11,7 @@ const CYAN = "#5eead4";
 
 function useNeuralGraph() {
   return useMemo(() => {
-    const nodeCount = 36;
+    const nodeCount = 38;
     const radius = 1.25;
     const nodes: Vector3[] = [];
 
@@ -40,12 +40,18 @@ function useNeuralGraph() {
   }, []);
 }
 
-function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
+type Motion = { motionScale: number };
+
+function NeuralNetwork({
+  nodes,
+  edges,
+  motionScale,
+}: ReturnType<typeof useNeuralGraph> & Motion) {
   const groupRef = useRef<Group>(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;
-    const t = state.clock.elapsedTime;
+    const t = state.clock.elapsedTime * motionScale;
     groupRef.current.rotation.y = t * 0.35;
     groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.12;
   });
@@ -54,11 +60,11 @@ function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
     <group ref={groupRef}>
       {nodes.map((pos, i) => (
         <mesh key={`node-${i}`} position={pos}>
-          <sphereGeometry args={[0.065, 16, 16]} />
+          <sphereGeometry args={[0.07, 16, 16]} />
           <meshStandardMaterial
             color={i % 3 === 0 ? GOLD : CYAN}
             emissive={i % 3 === 0 ? GOLD : CYAN}
-            emissiveIntensity={1.2}
+            emissiveIntensity={1.3}
             metalness={0.5}
             roughness={0.2}
           />
@@ -70,7 +76,7 @@ function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
           points={pair}
           color={i % 2 === 0 ? CYAN : GOLD}
           transparent
-          opacity={0.65}
+          opacity={0.6}
           lineWidth={1.5}
         />
       ))}
@@ -78,17 +84,17 @@ function NeuralNetwork({ nodes, edges }: ReturnType<typeof useNeuralGraph>) {
   );
 }
 
-function ShieldRing() {
+function ShieldRing({ motionScale }: Motion) {
   const ref = useRef<Mesh>(null);
 
   useFrame((state) => {
     if (!ref.current) return;
-    ref.current.rotation.z = state.clock.elapsedTime * 0.15;
+    ref.current.rotation.z = state.clock.elapsedTime * motionScale * 0.15;
   });
 
   return (
     <mesh ref={ref} rotation={[Math.PI / 2.15, 0, 0]}>
-      <torusGeometry args={[1.75, 0.035, 24, 128]} />
+      <torusGeometry args={[1.7, 0.04, 24, 128]} />
       <meshStandardMaterial
         color={GOLD}
         emissive={GOLD}
@@ -100,12 +106,12 @@ function ShieldRing() {
   );
 }
 
-function CarePathwayRings() {
+function CarePathwayRings({ motionScale }: Motion) {
   const ringA = useRef<Group>(null);
   const ringB = useRef<Group>(null);
 
   useFrame((state) => {
-    const t = state.clock.elapsedTime;
+    const t = state.clock.elapsedTime * motionScale;
     if (ringA.current) {
       ringA.current.rotation.x = t * 0.5;
       ringA.current.rotation.y = t * 0.25;
@@ -120,11 +126,11 @@ function CarePathwayRings() {
     <>
       <group ref={ringA} rotation={[0.5, 0.3, 0]}>
         <mesh>
-          <torusGeometry args={[2.05, 0.02, 12, 120]} />
+          <torusGeometry args={[2.0, 0.022, 12, 120]} />
           <meshStandardMaterial
             color={CYAN}
             emissive={CYAN}
-            emissiveIntensity={0.8}
+            emissiveIntensity={0.85}
             transparent
             opacity={0.7}
           />
@@ -132,13 +138,13 @@ function CarePathwayRings() {
       </group>
       <group ref={ringB} rotation={[1.2, -0.5, 0.2]}>
         <mesh>
-          <torusGeometry args={[2.25, 0.018, 12, 120]} />
+          <torusGeometry args={[2.25, 0.02, 12, 120]} />
           <meshStandardMaterial
             color={GOLD}
             emissive={GOLD}
-            emissiveIntensity={0.7}
+            emissiveIntensity={0.75}
             transparent
-            opacity={0.55}
+            opacity={0.6}
           />
         </mesh>
       </group>
@@ -146,50 +152,51 @@ function CarePathwayRings() {
   );
 }
 
-function CareCore() {
+function CareCore({ motionScale }: Motion) {
   const ref = useRef<Mesh>(null);
 
   useFrame((state) => {
     if (!ref.current) return;
-    const pulse = 1 + Math.sin(state.clock.elapsedTime * 2.2) * 0.1;
+    const t = state.clock.elapsedTime;
+    const pulse = 1 + Math.sin(t * 2.2 * motionScale) * 0.12;
     ref.current.scale.setScalar(pulse);
-    ref.current.rotation.y = state.clock.elapsedTime * 0.5;
-    ref.current.rotation.x = state.clock.elapsedTime * 0.3;
+    ref.current.rotation.y = t * motionScale * 0.5;
+    ref.current.rotation.x = t * motionScale * 0.3;
   });
 
   return (
     <mesh ref={ref}>
-      <icosahedronGeometry args={[0.5, 1]} />
+      <icosahedronGeometry args={[0.55, 1]} />
       <meshStandardMaterial
         color={CYAN}
         emissive={CYAN}
-        emissiveIntensity={1.5}
+        emissiveIntensity={1.6}
         wireframe
       />
     </mesh>
   );
 }
 
-function SceneContent() {
+function SceneContent({ motionScale }: Motion) {
   const graph = useNeuralGraph();
 
   return (
     <>
       <color attach="background" args={["#050a14"]} />
       <fog attach="fog" args={["#050a14", 4, 14]} />
-      <ambientLight intensity={0.35} />
-      <pointLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
-      <pointLight position={[-4, -2, 3]} intensity={1.2} color={CYAN} />
-      <pointLight position={[4, -4, 2]} intensity={1} color={GOLD} />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[5, 5, 5]} intensity={1.6} color="#ffffff" />
+      <pointLight position={[-4, -2, 3]} intensity={1.3} color={CYAN} />
+      <pointLight position={[4, -4, 2]} intensity={1.1} color={GOLD} />
 
-      <NeuralNetwork {...graph} />
-      <ShieldRing />
-      <CarePathwayRings />
-      <CareCore />
+      <NeuralNetwork {...graph} motionScale={motionScale} />
+      <ShieldRing motionScale={motionScale} />
+      <CarePathwayRings motionScale={motionScale} />
+      <CareCore motionScale={motionScale} />
 
-      <Stars radius={80} depth={40} count={1200} factor={3} saturation={0} fade speed={0.8} />
-      <Sparkles count={100} scale={6} size={3} speed={0.6} color={GOLD} />
-      <Sparkles count={100} scale={6} size={2.5} speed={0.8} color={CYAN} />
+      <Stars radius={80} depth={40} count={1400} factor={3} saturation={0} fade speed={motionScale} />
+      <Sparkles count={110} scale={6} size={3} speed={0.6 * motionScale} color={GOLD} />
+      <Sparkles count={110} scale={6} size={2.5} speed={0.8 * motionScale} color={CYAN} />
     </>
   );
 }
@@ -232,7 +239,11 @@ function CssFallback() {
   );
 }
 
-export function HealthcareScene() {
+type HealthcareSceneProps = {
+  motionScale?: number;
+};
+
+export function HealthcareScene({ motionScale = 1 }: HealthcareSceneProps) {
   const [webglFailed, setWebglFailed] = useState(false);
 
   if (webglFailed) {
@@ -251,7 +262,7 @@ export function HealthcareScene() {
         }}
         style={{ width: "100%", height: "100%", display: "block" }}
       >
-        <SceneContent />
+        <SceneContent motionScale={motionScale} />
       </Canvas>
     </WebGLErrorBoundary>
   );
