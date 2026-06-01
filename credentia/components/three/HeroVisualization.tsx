@@ -54,19 +54,13 @@ export function HeroVisualization() {
         aria-hidden
       />
 
-      <div className="relative h-[400px] w-full overflow-hidden rounded-4xl sm:h-[460px]">
+      <div className="relative h-[400px] w-full sm:h-[460px]">
         <HealthcareScene
           variant={variant}
           motionScale={prefersReducedMotion ? 0.25 : 1}
         />
 
-        <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-5 pt-16 ${
-            isDark
-              ? "bg-linear-to-t from-[#050a14] via-[#050a14]/60 to-transparent"
-              : "bg-linear-to-t from-[#f8fafc] via-[#f8fafc]/60 to-transparent"
-          }`}
-        >
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-2 pt-16">
           <p
             className={`font-display text-sm font-semibold ${
               isDark ? "text-white" : "text-text-primary"

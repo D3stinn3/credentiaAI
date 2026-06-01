@@ -24,7 +24,7 @@ type Palette = {
 
 const PALETTES: Record<SceneVariant, Palette> = {
   dark: {
-    background: "#050a14",
+    background: "#05080f",
     gold: "#e8c547",
     cyan: "#5eead4",
     nodeEmissive: 1.3,
@@ -294,7 +294,7 @@ class WebGLErrorBoundary extends Component<
 }
 
 function CssFallback({ variant }: { variant: SceneVariant }) {
-  const bg = variant === "dark" ? "bg-[#050a14]" : "bg-[#f8fafc]";
+  const bg = variant === "dark" ? "bg-[#05080f]" : "bg-[#f8fafc]";
   return (
     <div className={`absolute inset-0 overflow-hidden ${bg}`}>
       <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-cyan-accent/30 blur-3xl" />
@@ -324,7 +324,7 @@ export function HealthcareScene({
     <WebGLErrorBoundary onError={() => setWebglFailed(true)}>
       <Canvas
         className="h-full! w-full!"
-        camera={{ position: [0, 0, 4.8], fov: 45 }}
+        camera={{ position: [0, 0, 5.6], fov: 45 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
         onCreated={({ gl }) => {
