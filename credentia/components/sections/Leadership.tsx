@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { Check } from "lucide-react";
 import { leadership } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { HeroVisualization } from "@/components/three/HeroVisualization";
 
 export function Leadership() {
   return (
@@ -10,21 +10,15 @@ export function Leadership() {
         <SectionHeading eyebrow={leadership.eyebrow} title={leadership.title} align="left" />
 
         <div className="grid gap-12 lg:grid-cols-[280px_1fr] lg:items-start">
-          <div className="relative mx-auto w-full max-w-[280px] lg:mx-0">
-            <div
-              className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-gold-tint to-cyan-tint opacity-80"
-              aria-hidden
-            />
-            <Image
-              src="/images/Logo1.jpeg"
-              alt="Credentia AI brand mark"
-              width={280}
-              height={280}
-              className="relative rounded-2xl object-cover shadow-[var(--shadow-elevated)]"
+          <div className="mx-auto w-full max-w-[280px] lg:mx-0 lg:sticky lg:top-28">
+            <HeroVisualization
+              className="max-w-[280px]"
+              heightClass="h-[260px] sm:h-[280px]"
+              frameClass="overflow-hidden rounded-2xl"
             />
           </div>
 
-          <div className="rounded-2xl border border-border bg-bg-elevated p-8 shadow-[var(--shadow-card)] lg:p-10">
+          <div className="rounded-2xl border border-border bg-bg-elevated p-8 shadow-(--shadow-card) lg:p-10">
             <p className="border-l-4 border-gold-primary pl-4 text-lg leading-relaxed text-text-muted">
               {leadership.intro}
             </p>

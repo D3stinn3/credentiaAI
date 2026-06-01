@@ -38,7 +38,17 @@ function getServerTheme(): SceneVariant {
   return "light";
 }
 
-export function HeroVisualization() {
+type HeroVisualizationProps = {
+  className?: string;
+  heightClass?: string;
+  frameClass?: string;
+};
+
+export function HeroVisualization({
+  className = "max-w-lg",
+  heightClass = "h-[400px] sm:h-[460px]",
+  frameClass = "",
+}: HeroVisualizationProps) {
   const prefersReducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotion,
@@ -47,13 +57,13 @@ export function HeroVisualization() {
   const variant = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
 
   return (
-    <div className="relative w-full max-w-lg">
+    <div className={`relative w-full ${className}`}>
       <div
         className="absolute -inset-6 rounded-full bg-radial from-gold-primary/15 via-cyan-accent/10 to-transparent blur-3xl"
         aria-hidden
       />
 
-      <div className="relative h-[400px] w-full sm:h-[460px]">
+      <div className={`relative w-full ${heightClass} ${frameClass}`}>
         <HealthcareScene
           variant={variant}
           motionScale={prefersReducedMotion ? 0.25 : 1}
